@@ -35,7 +35,7 @@ resistance. v1.0 makes that a property you can run, not a slogan.
 ```bash
 pip install -e .          # from a clone
 # or
-pip install git+https://github.com/rod-studio/flower-of-life-protocol.git
+pip install git+https://github.com/MontanaMiramar/flower-of-life-protocol.git
 ```
 
 Runtime dependencies are minimal: `cryptography`, `rfc8785` (JCS), `base58`.
