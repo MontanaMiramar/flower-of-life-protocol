@@ -1,0 +1,27 @@
+{
+  "version": "flp-core/1",
+  "_comment": "Forkable core vocabulary (PROTOCOL.md §6.4). A Schelling point, not an authority: extend by PR or by forking. No approval gate, no runtime registry. Capability URIs follow flp:cap/<domain>/<path>.",
+  "synonyms": {
+    "flp:cap/data/market-research": [
+      "flp:cap/data/market-intelligence",
+      "flp:cap/data/market-analysis"
+    ],
+    "flp:cap/outreach/b2b": [
+      "flp:cap/sales/b2b-outreach",
+      "flp:cap/outreach/business-development"
+    ],
+    "flp:cap/tourism/venue-availability": [
+      "flp:cap/tourism/venue-booking-data",
+      "flp:cap/tourism/local-venue-data"
+    ],
+    "flp:cap/finance/market-signals": [
+      "flp:cap/finance/crypto-market-signals",
+      "flp:cap/finance/polymarket-signals",
+      "flp:cap/finance/defi-yield-intelligence"
+    ],
+    "flp:cap/tourism/event-calendar": [
+      "flp:cap/tourism/upcoming-events",
+      "flp:cap/tourism/event-schedule"
+    ]
+  }
+}
