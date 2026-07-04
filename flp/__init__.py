@@ -20,6 +20,10 @@ from .cost_model import (
     CostModel, CapabilityProfile, MatchedItem, ItemDecision, risk,
 )
 from .matching import Capability, Vocabulary, Matcher
+from .manifest import (
+    CapabilityManifest, ManifestDiscloser, answer_challenge,
+    verify_manifest, verify_reveal, band_mismatch,
+)
 from .net import validate_endpoint
 from .agent import FLPAgent
 from .server import FLPServer, FLPClient
@@ -44,6 +48,8 @@ __all__ = [
     "make_attestation",
     "CostModel", "CapabilityProfile", "MatchedItem", "ItemDecision", "risk",
     "Capability", "Vocabulary", "Matcher",
+    "CapabilityManifest", "ManifestDiscloser", "answer_challenge",
+    "verify_manifest", "verify_reveal", "band_mismatch",
     "validate_endpoint", "FLPAgent", "FLPServer", "FLPClient",
     "sentence_transformer_semantic", "ollama_semantic",
 ]

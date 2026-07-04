@@ -193,6 +193,25 @@ class Identity:
 
     # -- signing ------------------------------------------------------------ #
 
+    def sign_raw(self, data: bytes) -> str:
+        """Sign raw bytes (e.g. a Merkle commitment root). Base64 signature.
+
+        For wire objects use sign(); this exists for commitments where the
+        signature must cover exactly one digest and nothing else (manifest
+        spec §4: the did signs commitment.root — nothing else).
+        """
+        return base64.b64encode(self._sk.sign(data)).decode("ascii")
+
+    @staticmethod
+    def verify_raw(agent_id: str, data: bytes, sig_b64: str) -> bool:
+        """Verify a sign_raw() signature against the key inside a did:key."""
+        try:
+            pub = decode_did_key(agent_id)
+            pub.verify(base64.b64decode(sig_b64), data)
+            return True
+        except Exception:  # noqa: BLE001 — any malformed input is just "no"
+            return False
+
     def sign(self, body: dict[str, Any]) -> Envelope:
         """Wrap a body in a signed envelope. Adds issued_at/nonce if absent."""
         body = dict(body)
