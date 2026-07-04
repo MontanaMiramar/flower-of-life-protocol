@@ -6,7 +6,7 @@ each other. Identity is a key (no registry); reputation is relational (no global
 score); cooperation is decided by a cost model that bites; matching survives
 without a shared vocabulary; discovery and outcomes are signed end to end.
 
-Spec: PROTOCOL.md.  License: MIT.
+Spec: PROTOCOL.md.  License: Apache-2.0.
 """
 
 from .identity import (
