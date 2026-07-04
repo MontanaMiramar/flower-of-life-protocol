@@ -30,9 +30,13 @@ try:
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import random
+import time
+
 from flp import (
     Identity, FLPAgent, FLPServer, FLPClient, verify,
     Matcher, Vocabulary, CapabilityProfile, CostModel, MatchedItem,
+    ReputationLedger, Cooperation, Verdict, make_attestation,
 )
 
 # ============================================================================
@@ -165,5 +169,131 @@ def main():
         sv_stranger.stop()
 
 
+
+
+# ============================================================================
+# Inflated-claim experiment (manifest spec §8.5; closes the loop with §6.7).
+#
+# Two providers face the IDENTICAL sequence of cooperation opportunities —
+# same seed, same counterparties, same magnitudes — so any difference in
+# cumulative profit is attributable to strategy alone. The honest provider
+# delivers what it announces; the liar announces a capability it does not
+# have, accepts, fails, and disputes the outcome (signs "fulfilled" against
+# the victim's "failed" — a disagreement is CONFIRMED_BAD either way, §4.3).
+#
+# Both the liar's private profit and each deceived victim's loss are
+# recorded: the social cost of the lie is data, not a footnote.
+#
+# Run: python stranger_harness.py --inflated-claim
+# ============================================================================
+
+EXP_CAPABILITY = "flp:cap/data/market-research"
+EXP_MAGNITUDES = (2.0, 10.0, 20.0)   # small always clears at trust 0 (§5.4);
+                                     # 10 needs trust > 1/3; 20 needs > 0.72 (§11.1)
+EXP_SOLO_COST = 8.0
+EXP_TRANSPORT = 1.0
+# Experiment accounting, per unit of magnitude. PRICE is paid on acceptance
+# (v1 has no settlement layer); DELIVERY is the honest provider's cost of
+# actually doing the work; VALUE is what a fulfilled exchange is worth to
+# the victim. Lying is locally TEMPTING by construction: pocketing PRICE
+# beats PRICE − DELIVERY on any single accepted trial.
+EXP_PRICE = 0.5
+EXP_DELIVERY = 0.2
+EXP_VALUE = 1.2
+
+
+def _run_strategy(honest, schedule, n_victims, now):
+    provider = Identity.generate()
+    victims = [Identity.generate() for _ in range(n_victims)]
+    ledgers = [ReputationLedger(v.agent_id) for v in victims]
+    model = CostModel(CapabilityProfile(
+        solo_cost={EXP_CAPABILITY: EXP_SOLO_COST}, transport_cost=EXP_TRANSPORT))
+
+    profit = 0.0          # provider's cumulative take
+    victim_net = 0.0      # counterparties' cumulative surplus (+) / loss (−)
+    accepted_by_mag = {m: 0 for m in EXP_MAGNITUDES}
+    rejected = 0
+    trajectory = []       # (trial, trust_at_decision, accepted, profit_so_far)
+
+    for i, (vi, mag) in enumerate(schedule):
+        trust = ledgers[vi].trust(provider.agent_id, now=now)
+        decision = model.evaluate_item(
+            MatchedItem(capability=EXP_CAPABILITY, magnitude=mag), trust)
+        if not decision.cooperate:
+            rejected += 1
+            trajectory.append((i, trust, False, profit))
+            continue
+        accepted_by_mag[mag] += 1
+
+        if honest:
+            profit += (EXP_PRICE - EXP_DELIVERY) * mag
+            victim_net += (EXP_VALUE - EXP_PRICE) * mag - EXP_TRANSPORT
+            v_verdict, p_verdict = Verdict.FULFILLED, Verdict.FULFILLED
+        else:
+            profit += EXP_PRICE * mag                       # pockets the price
+            victim_net -= EXP_PRICE * mag + EXP_TRANSPORT   # paid, got nothing
+            v_verdict, p_verdict = Verdict.FAILED, Verdict.FULFILLED  # disputed
+
+        pid = f"trial-{i}"
+        coop = Cooperation(pid, victims[vi].agent_id, provider.agent_id,
+                           started_at=now - 60)
+        coop.add_attestation(make_attestation(
+            victims[vi], pid, provider.agent_id, v_verdict, issued_at=int(now)))
+        coop.add_attestation(make_attestation(
+            provider, pid, victims[vi].agent_id, p_verdict, issued_at=int(now)))
+        ledgers[vi].record(coop)
+        trajectory.append((i, trust, True, profit))
+
+    return {
+        "provider_profit": round(profit, 2),
+        "victim_net": round(victim_net, 2),
+        "accepted_by_magnitude": {str(m): n for m, n in accepted_by_mag.items()},
+        "rejected": rejected,
+        "final_trust_per_victim": [
+            round(ledgers[vi].trust(provider.agent_id, now=now), 3)
+            for vi in range(n_victims)
+        ],
+        "trajectory": trajectory,
+    }
+
+
+def run_inflated_claim_experiment(n_trials=50, seed=42, n_victims=3):
+    """Honest vs. liar over the identical opportunity schedule. Returns both
+    ledgers of numbers; the caller decides what to print or assert."""
+    rng = random.Random(seed)
+    schedule = [(rng.randrange(n_victims), rng.choice(EXP_MAGNITUDES))
+                for _ in range(n_trials)]
+    now = time.time()
+    return {
+        "n_trials": n_trials,
+        "seed": seed,
+        "n_victims": n_victims,
+        "honest": _run_strategy(True, schedule, n_victims, now),
+        "liar": _run_strategy(False, schedule, n_victims, now),
+    }
+
+
+def print_inflated_claim_report(res):
+    h, l = res["honest"], res["liar"]
+    print(f"Inflated-claim experiment — {res['n_trials']} trials, "
+          f"{res['n_victims']} counterparties, seed {res['seed']}")
+    print(f"{'':22}{'honest':>10}{'liar':>10}")
+    print(f"{'provider profit':22}{h['provider_profit']:>10}{l['provider_profit']:>10}")
+    print(f"{'victims net':22}{h['victim_net']:>10}{l['victim_net']:>10}")
+    for m in EXP_MAGNITUDES:
+        key = str(m)
+        print(f"{'accepted @ mag ' + key:22}"
+              f"{h['accepted_by_magnitude'][key]:>10}{l['accepted_by_magnitude'][key]:>10}")
+    print(f"{'rejected':22}{h['rejected']:>10}{l['rejected']:>10}")
+    print(f"{'final trust':22}{str(h['final_trust_per_victim']):>10}"
+          f"{str(l['final_trust_per_victim']):>10}")
+    verdict = "STRICTLY LESS profitable" if l["provider_profit"] < h["provider_profit"] \
+        else "NOT less profitable (unexpected!)"
+    print(f"-> lying is {verdict}; social cost inflicted: {-l['victim_net']}")
+
+
 if __name__ == "__main__":
-    main()
+    if "--inflated-claim" in sys.argv:
+        print_inflated_claim_report(run_inflated_claim_experiment())
+    else:
+        main()
