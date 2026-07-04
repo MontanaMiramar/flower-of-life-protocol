@@ -965,6 +965,125 @@ exploit.
 
 ---
 
+## 11. Formal Model
+
+> **Status.** §11.1–11.2 restate the v1.0 mechanism of §4–§5 compactly;
+> each claim is one-line algebra or holds by construction. §11.3 is a
+> **conjecture**, stated for the record and slated for simulation.
+> Notation is that of §4–§6 throughout.
+
+### 11.1 The Cooperation Threshold T*
+
+From §5.2–§5.3, cooperation on capability `c` happens iff
+
+    transport_cost + risk(me→X) × magnitude(c) < solo_cost(c)
+    risk(me→X) = RISK_MAX − trust(me→X) × (RISK_MAX − RISK_MIN)
+
+Solving for trust gives a per-capability **threshold**:
+
+    T*(c) = ( RISK_MAX − (solo_cost(c) − transport_cost) / magnitude(c) )
+            ÷ ( RISK_MAX − RISK_MIN )
+
+    cooperate(c)  ⟺  trust(me→X) > T*(c)
+
+In the reduced notation (set `RISK_MIN = 0`, `RISK_MAX = 1`;
+write `T = trust(me→X)`, `L = magnitude(c)`,
+`c_ij = transport_cost`, `c_solo = solo_cost(c)`), the rule
+`c_ij + (1 − T)·L < c_solo` yields:
+
+    T* = 1 − (c_solo − c_ij) / L        cooperate ⟺ T > T*
+
+Comparative statics — every §5.4 behavior is a sign of a derivative:
+
+- **∂T*/∂L > 0.** Stakes raise the bar. As `L → ∞`,
+  `T* → RISK_MAX/(RISK_MAX−RISK_MIN)` (= 1 in the reduced form):
+  near-certainty is demanded. As `L → 0⁺` (with `c_solo > c_ij`), `T*` falls without
+  bound: any trust level clears — cooperation almost on faith. The §3
+  probation tier is this derivative, not a separate rule.
+- **∂T*/∂c_solo < 0.** The worse off I am alone, the less trust I
+  demand. Genuine need lowers the bar; self-sufficiency raises it.
+- **∂T*/∂c_ij > 0.** Exchange overhead raises the bar, mattering most
+  at small `L` where transport dominates the risk term.
+- **Hard ceiling.** With `RISK_MIN > 0`, `T*(c) ≥ 1` whenever
+  `magnitude(c) ≥ (solo_cost(c) − transport_cost) / RISK_MIN`: beyond
+  that stake, *no* trust level clears — even a perfect partner is
+  passed. Risk never reaches zero, so exposure is bounded by design.
+- **Match confidence.** §6.7's `effective_risk = risk / match_confidence`
+  is equivalent to substituting `L ↦ L / match_confidence`: a fuzzy
+  match at confidence `m` prices exactly like a stake `1/m` times
+  larger.
+
+### 11.2 Trust Propagation with Decay
+
+Let `t(a→b) ∈ [0,1]` be the direct edge from a's outcomes with b
+(§4.3–§4.4, time-decayed per §4.6). For a trust path
+`p = (me, y₁, …, X)` with `|p|` hops, define
+
+    score(p) = decay^(|p|−1) × Π t(a→b)   over consecutive hops (a→b)
+
+    trust_prop(me→X) = max over paths p with |p| ≤ MAX_DEPTH of score(p)
+
+with `decay ∈ (0,1)` (default 0.5) and `MAX_DEPTH` (default 2); longer
+paths contribute 0, and direct experience, where it exists, dominates
+(§4.2). Polarity per §4.5.1: only CONFIRMED-GOOD outcomes create or
+raise the `t(a→b)` edges above; negative and dangling outcomes modify
+only the direct edge between the two parties involved and never enter
+any other observer's path product.
+
+**Anti-defamation property.** For any agent M and any edge `(a→b)` with
+`M ∉ {a, b}`: nothing M emits can change `t(a→b)`. By construction:
+raising it requires a CONFIRMED-GOOD bilaterally signed by a and b
+(§4.3), which M cannot forge; lowering it would require negative
+testimony to propagate, which §4.5.1 forbids. M's entire influence over
+edges it does not sit on is the withdrawal of its own future positive
+testimony — withholding praise, the only unforgeable negative signal,
+is the only one that travels.
+
+### 11.3 Percolation (conjecture)
+
+Fix a capability class and let `G(T*)` be the directed graph whose
+edges are the pairs with `trust(i→j) > T*(c)` (§11.1). **Conjecture:**
+network-scale cooperation is a percolation phenomenon — when the
+density of above-threshold edges crosses the percolation point of the
+underlying contact topology, a giant cooperating component emerges;
+below it, the network fragments into islands of trust unreachable from
+one another through any trusted path (`MAX_DEPTH = 2` makes the
+sub-critical regime strictly local). This is stated as a conjecture,
+not a theorem: `T*` is heterogeneous (per-agent, per-capability), edges
+are directed, and decay couples edge weight to path structure, so
+classical percolation results do not transfer off the shelf. It is the
+primary candidate for simulation; the companion paper (in preparation)
+develops it.
+
+### 11.4 Relation to EigenTrust and Webs of Trust
+
+EigenTrust and its descendants compute a **global** trust vector — one
+ranking all peers converge on — which is precisely the center FLP
+refuses: a single number to capture, inflate, or poison (§4.1). FLP
+differs on three axes. (1) Trust is **relational**: `trust(me→X)` is my
+private computation from my vantage point; two observers legitimately
+disagree, and nothing reconciles them. (2) **Negatives are edge-local**
+(§4.5.1): EigenTrust normalizes positive and negative feedback into one
+propagating quantity, which readmits defamation; FLP propagates only
+the bilaterally-signed positive and lets silence do the punishing.
+(3) The output is a **decision, not a ranking**: trust exists only to
+be compared against `T*(c)` inside the cost model — matching opens the
+door, §5 decides whether to walk through. PGP-style webs of trust share
+the relational stance but certify *identity* ("this key belongs to this
+person"); FLP's graph certifies *behavior* (signed outcomes), decays
+with time, and terminates in an economic decision rather than a
+key-validity judgment.
+
+> **Design decisions (on record).**
+> 1. T* is derived from §5, not introduced: the threshold *is* the cost
+>    model read in the trust dimension.
+> 2. Propagation is max-over-paths with multiplicative decay, positives
+>    only; anti-defamation is a structural property, not a policy.
+> 3. Percolation is labeled a conjecture until simulated — the spec
+>    does not claim theorems it has not earned.
+
+---
+
 ## Appendix A — Conceptual Completeness Map
 
 How v1.0 closes each v0.1 weakness identified in audit:
