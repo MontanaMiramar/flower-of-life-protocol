@@ -125,6 +125,6 @@ result.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Code: [Apache-2.0](LICENSE). The protocol specification ([PROTOCOL.md](PROTOCOL.md)) and the documents under `docs/` are additionally licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 *Flower of Life Protocol — Rod Studio, 2026.*

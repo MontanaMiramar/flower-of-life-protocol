@@ -94,3 +94,7 @@ and here is how it becomes a network" reads as architecture, not as a hole.
 *PROTOCOL.md §10 is reserved for FLP-Settlement.*
 *core.json is forkable and extensible by design.*
 *The reputation ledger is the economic backbone for all three paths.*
+
+---
+
+*Flower of Life Protocol documentation — Rod Studio, 2026. Licensed under CC BY 4.0.*

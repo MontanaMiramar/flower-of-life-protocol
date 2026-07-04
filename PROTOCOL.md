@@ -988,4 +988,4 @@ How v1.0 closes each v0.1 weakness identified in audit:
 
 *FLP v1.0 (DRAFT). Conceptual specification complete. Reference
 implementation (signed identity + relational reputation) to follow.*
-*Flower of Life Protocol — Rod Studio, 2026. MIT.*
+*Flower of Life Protocol — Rod Studio, 2026. This specification is licensed under CC BY 4.0; the reference implementation under Apache-2.0.*
