@@ -1,4 +1,4 @@
-# Flower of Life Protocol (FLP) v1.0
+# Flower of Life Protocol (FLP) v1.1
 
 **A protocol for matching and trust between autonomous agents that don't know each other.**
 
