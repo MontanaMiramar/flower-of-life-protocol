@@ -9,9 +9,9 @@ rational strategy — with no central authority, no registry, and no shared
 operator.
 
 The core idea: in a system with no center, cooperation is the path of least
-resistance. v1.0 makes that a property you can run, not a slogan.
+resistance. v1.1 makes that a property you can run, not a slogan.
 
-> **Maturity — read this first.** v1.0 is a complete, tested reference
+> **Maturity — read this first.** v1.1 is a complete, tested reference
 > implementation of the protocol's hard parts (cryptographic identity,
 > relational reputation, a cost model that decides, vocabulary-independent
 > matching, a signed HTTP handshake with SSRF defense). It is **not** a
@@ -86,8 +86,11 @@ reputation (§4) ──trust(me→X)──▶ cost model (§5) ──decides─�
 Every claim in the spec has a test. Run them:
 
 ```bash
-pytest            # 74 tests across the five pillars
+pytest            # 87 tests across the five pillars
 ```
+
+[docs/appendix-A.md](docs/appendix-A.md) maps every spec claim to its test
+and gives the exact commands to reproduce all results from a clean venv.
 
 ## Repository layout
 
@@ -115,7 +118,11 @@ result.
 
 ## Roadmap
 
-- **v1.1** — witnessed (third-party) outcome attestation for higher-assurance
+- **v1.1 (shipped)** — formal model (PROTOCOL.md §11: cooperation threshold
+  T*, trust propagation, percolation conjecture); Capability Manifest draft
+  v0.2 with Merkle selective disclosure; the inflated-claim harness. See
+  [CHANGELOG.md](CHANGELOG.md).
+- **v1.2** — witnessed (third-party) outcome attestation for higher-assurance
   contexts; gossip robustness.
 - **v2 — FLP-Settlement** (reserved, PROTOCOL.md §10): the same identity +
   reputation + discovery substrate extended to real-world assets a human owns
@@ -125,6 +132,13 @@ result.
 
 ## License
 
-Code: [Apache-2.0](LICENSE). The protocol specification ([PROTOCOL.md](PROTOCOL.md)) and the documents under `docs/` are additionally licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Code: [Apache-2.0](LICENSE). The protocol specification ([PROTOCOL.md](PROTOCOL.md)) and the documents under `docs/` are additionally licensed under [CC BY 4.0](LICENSE-SPEC). See [NOTICE](NOTICE).
+
+## Contributing & security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) to get started and
+[SECURITY.md](SECURITY.md) for how to report vulnerabilities (identity
+forgery, Sybil economics, SSRF — please don't open public issues for
+those). Academic use: cite via [CITATION.cff](CITATION.cff).
 
 *Flower of Life Protocol — Rod Studio, 2026.*
