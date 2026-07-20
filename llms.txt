@@ -1,0 +1,45 @@
+# Flower of Life Protocol (FLP)
+
+> A protocol for matching and trust between autonomous agents that don't know
+> each other. Self-certifying identity (did:key, Ed25519), relational
+> reputation with no global score, a cost model that decides when cooperation
+> beats defection, vocabulary-independent capability matching, and federated
+> discovery — no central authority, registry, or shared operator.
+
+Code is Apache-2.0; the specification and docs are additionally CC BY 4.0.
+Current release: v1.1.0 (87 tests, every normative claim in the spec is
+covered by a test).
+
+## Specification
+
+- [PROTOCOL.md](PROTOCOL.md): the full protocol specification — threat model
+  (§1), identity (§2), newcomers and whitewashing (§3), reputation (§4),
+  cost model (§5), matching and capability namespacing (§6), federated
+  discovery (§7), wire format (§8), versioning (§9), reserved settlement
+  layer (§10), formal model (§11).
+- [docs/CAPABILITY_MANIFEST_spec_v0.2.md](docs/CAPABILITY_MANIFEST_spec_v0.2.md):
+  Capability Manifest draft — Merkle selective disclosure and tier challenge.
+- [docs/LIMITATIONS.md](docs/LIMITATIONS.md): honest statement of what FLP
+  does not solve (cold networks, sparse graphs).
+
+## Reference implementation
+
+- [README.md](README.md): install, 60-second handshake example, repo layout.
+- Package `flp/`: identity.py (§2), reputation.py (§4), cost_model.py (§5),
+  matching.py (§6), net.py (§7.5 SSRF guard), agent.py + server.py (§8).
+- [vocabulary/core.json](vocabulary/core.json): the forkable core vocabulary.
+- Runtime dependencies: cryptography, rfc8785 (JCS), base58. Python ≥ 3.10.
+
+## Evidence
+
+- Tests: `pytest -q` → 87 passing; tests/ maps one-to-one onto the spec's
+  pillars.
+- [docs/experiments/inflated_claim.md](docs/experiments/inflated_claim.md):
+  harness result — inflated capability claims are strictly unprofitable
+  over 50 identical trials (PROTOCOL.md §6.7, Manifest spec §8.5).
+- [docs/appendix-A.md](docs/appendix-A.md): how to reproduce every result.
+
+## Project
+
+- [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md),
+  [SECURITY.md](SECURITY.md), [CITATION.cff](CITATION.cff).

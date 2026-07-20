@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use the Flower of Life Protocol in your research, please cite it as below."
+title: "Flower of Life Protocol (FLP): matching and trust between autonomous agents that don't know each other"
+authors:
+  - name: "Rod Studio"
+version: 1.1.0
+date-released: 2026-07-06
+license: Apache-2.0
+repository-code: "https://github.com/MontanaMiramar/flower-of-life-protocol"
+url: "https://github.com/MontanaMiramar/flower-of-life-protocol"
+abstract: >-
+  FLP is a protocol for matching and trust between autonomous agents with no
+  prior relationship: self-certifying cryptographic identity (did:key,
+  Ed25519, JCS-signed envelopes), relational reputation with no global score,
+  a per-capability cost model that decides whether cooperation beats
+  defection, vocabulary-independent capability matching, and federated
+  discovery over a signed HTTP handshake — with no central authority,
+  registry, or shared operator. The specification includes a formal model
+  (cooperation threshold, trust propagation with decay) and an experimental
+  harness showing inflated capability claims are strictly unprofitable.
+keywords:
+  - autonomous agents
+  - trust
+  - reputation
+  - decentralized identity
+  - did:key
+  - protocol
