@@ -604,6 +604,35 @@ certain the match, the more trust or the smaller the stakes required.
 > 5. Lower match confidence → higher effective risk → smaller/safer
 >    exchanges. Flexibility and safety are the same dial.
 
+### 6.8 Where Intent Lives
+
+A recurring design question: where does an agent's *intention* live in
+FLP? The answer is deliberately narrow. Intent is **declared** in the
+`needs` and `surplus` arrays of the signed card (§8.3) — the only
+intention the protocol recognizes is "I seek X, I offer Y," signed and
+attributable — and it **materializes** in the proposal an encounter
+produces: a concrete capability, magnitude, and counterparty, evaluated
+by the cost model (§5).
+
+The protocol has no field for deeper intent (purpose, motive, end-use),
+and this is a decision, not an omission:
+
+1. **It is unverifiable.** Nothing in the §1 threat model lets a
+   counterparty distinguish a sincere declared motive from a fabricated
+   one. An unverifiable field invites decorative honesty — precisely the
+   "assume honest agents" posture FLP rejects everywhere else. FLP does
+   not ask agents to declare good intentions; it makes bad ones
+   unprofitable (§5, §6.6–6.7).
+2. **It cuts against selective disclosure.** The manifest direction
+   (Capability Manifest spec) is that an agent proves what it must and
+   reveals nothing more. A deep-intent field runs the other way:
+   structural over-revelation, with none of it provable.
+3. **It belongs above the core.** What the cooperated-upon value may be
+   *used for* is a contract term between the parties — settlement-layer
+   material, like delivery and verification (§1.5, §10). The core decides
+   *whether* to cooperate; what the cooperation is ultimately *for* is a
+   layer above.
+
 ---
 
 ## 7. Federated Discovery
