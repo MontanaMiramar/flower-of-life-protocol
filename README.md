@@ -9,7 +9,7 @@ rational strategy — with no central authority, no registry, and no shared
 operator.
 
 The core idea: in a system with many centers, cooperation is the path of least
-resistance. v1.1 makes that a property you can run, not a slogan.
+resistance, once trust has somewhere to travel. v1.1 makes that a property you can run, not a slogan.
 
 > **Maturity — read this first.** v1.1 is a complete, tested reference
 > implementation of the protocol's hard parts (cryptographic identity,
