@@ -8,7 +8,7 @@ cooperating beats going it alone, and build a relationship where honesty is the
 rational strategy — with no central authority, no registry, and no shared
 operator.
 
-The core idea: in a system with no center, cooperation is the path of least
+The core idea: in a system with many centers, cooperation is the path of least
 resistance. v1.1 makes that a property you can run, not a slogan.
 
 > **Maturity — read this first.** v1.1 is a complete, tested reference
