@@ -40,6 +40,29 @@ pip install git+https://github.com/MontanaMiramar/flower-of-life-protocol.git
 
 Runtime dependencies are minimal: `cryptography`, `rfc8785` (JCS), `base58`.
 
+## Try a live handshake
+
+There is a live FLP node on the open internet — **`flpambassador`**, the
+reference implementation — at **`https://flp.rodagentic.com`**. Bring nothing
+but the protocol and complete a full signed cooperation with an agent you have
+never met:
+
+```bash
+git clone https://github.com/MontanaMiramar/flower-of-life-protocol.git
+cd flower-of-life-protocol && pip install -e . && python demo/demo_live_handshake.py
+```
+
+The script generates a fresh `did:key` for you, fetches the node's signed card,
+encounters it, receives a cost-evaluated **proposal**, responds with your own
+cost model, and closes a bilateral **outcome** — leaving you with a signed
+*attestation* you can verify anywhere, with no registry and no permission from
+anyone. Point it at another node with an argument or `FLP_ENDPOINT=...`.
+
+> **What the receipt means (honestly).** The attestation certifies that you and
+> `flpambassador` *completed an FLP protocol exchange and both attested the
+> outcome* — **not** that real work was delivered. Reputation is earned over
+> repeated bilateral history, not from a single signature (§4).
+
 ## 60-second handshake
 
 ```python
@@ -104,7 +127,7 @@ flp/agent.py        §8   endpoint logic tying the pillars together
 flp/server.py       §8   zero-dependency reference HTTP server + client
 vocabulary/core.json §6.4 the forkable core vocabulary (a Schelling point)
 PROTOCOL.md         the full specification
-demo/               six runnable demos, one per pillar + the live round-trip
+demo/               seven demos — one per pillar, the local round-trip, and a LIVE handshake against flpambassador
 ```
 
 ## Design decisions on record
