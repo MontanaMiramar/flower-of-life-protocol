@@ -63,6 +63,10 @@ anyone. Point it at another node with an argument or `FLP_ENDPOINT=...`.
 > outcome* — **not** that real work was delivered. Reputation is earned over
 > repeated bilateral history, not from a single signature (§4).
 
+**Live research lab.** The lab that runs `flpambassador` is open on the web at
+[rodagentic.com](https://rodagentic.com) — its public face today is a chat host
+and an MCP endpoint.
+
 ## 60-second handshake
 
 ```python
